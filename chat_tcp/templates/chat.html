@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat em Python</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header">
+            <h1>Chat em Python</h1>
+        </div>
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message">
+                    <p class="meta">{{ message["timestamp"] }} - {{ message["alias"] }}:</p>
+                    <p class="text">{{ message["text"] }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="input">
+            <form method="POST" action="{{ url_for('send') }}">
+                <input type="text" name="message" placeholder="Digite sua mensagem aqui...">
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
