@@ -6,13 +6,16 @@ app = Flask(__name__)
 
 alias = ""
 
+messages = []  # lista para armazenar as mensagens transmitidas
 #Função para lidar com as conexões dos clientes:
 #verifica se o cliente existe, caso não exclui ele?
 def handle_client(client):
     while True:
         try:
+            messages.clear()
             message = client.recv(1024)
             message_decoded = message.decode('utf-8')
+            messages.append(message_decoded)  # adiciona a mensagem à lista de mensagens
             print(message_decoded)
         except:
             print('Error!')
@@ -46,14 +49,15 @@ def connect():
     client.connect(('127.0.0.1', 59000))
     client.send(alias.encode('utf-8'))
     thread = threading.Thread(target=handle_client, args=(client,))
-    thread.start()
-    return render_template("chat.html", alias=alias)
+    thread.start()        
+    return render_template("chat.html", alias=alias, messages=messages)
 
 @app.route("/send_message", methods=["POST"])
 def send():
     message = request.form["message"]
-    send_message(f"{alias}: {message}")
-    return render_template("chat.html", alias=alias, message_sent=True)
+    send_message(f"{alias}: {message}")  
+    return render_template("chat.html", alias=alias, message_sent=True, messages=messages)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
